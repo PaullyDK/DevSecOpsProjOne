@@ -1,0 +1,1208 @@
+{
+  "version": "2.2.0",
+  "summary": {
+    "title": "Financial Planner - Secure SDLC Threat Model",
+    "owner": "",
+    "description": "Threat model for the Financial Planner web app (Node/Express 5, MySQL, express-session, hosted on Railway). Project P7: Secure SDLC Pipeline. Red elements have open threats.",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "Financial Planner DFD",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.2.0",
+        "cells": [
+          {
+            "position": {
+              "x": 20,
+              "y": 20
+            },
+            "size": {
+              "width": 240,
+              "height": 440
+            },
+            "attrs": {
+              "label": {
+                "text": "TB1: Internet (untrusted)"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "5f9e8b06-f72c-5b7f-9d24-d35993eea399",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB1: Internet (untrusted)",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 300,
+              "y": 20
+            },
+            "size": {
+              "width": 900,
+              "height": 460
+            },
+            "attrs": {
+              "label": {
+                "text": "TB2: Railway platform"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "f11d90d9-0fb3-5da9-aaad-f96e9e7f2d52",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB2: Railway platform",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 500,
+              "y": 50
+            },
+            "size": {
+              "width": 300,
+              "height": 400
+            },
+            "attrs": {
+              "label": {
+                "text": "TB3: App process"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "91690373-b846-5e06-8970-fa0f10d0d2ec",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB3: App process",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 840,
+              "y": 50
+            },
+            "size": {
+              "width": 330,
+              "height": 400
+            },
+            "attrs": {
+              "label": {
+                "text": "TB4: Data store"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "bfb514f1-5f0a-5eba-8709-3acb126168b5",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB4: Data store",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 300,
+              "y": 540
+            },
+            "size": {
+              "width": 900,
+              "height": 200
+            },
+            "attrs": {
+              "label": {
+                "text": "TB5: CI/CD supply chain"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "a89a9723-e21c-5c02-8c47-5f080cffa9ec",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB5: CI/CD supply chain",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 60,
+              "y": 90
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "User / Guest (browser)"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "id": "d7944ae9-51ca-5c43-9893-b2c7a5ebcacf",
+            "zIndex": 11,
+            "data": {
+              "type": "tm.Actor",
+              "name": "User / Guest (browser)",
+              "description": "Registered user or anonymous guest using the SPA pages (index, transactions, profile).",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "providesAuthentication": false,
+              "threats": [
+                {
+                  "id": "8e1cec68-3b79-5302-83dc-11dd61e59879",
+                  "title": "Stored XSS via transaction title / budget category",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "index.html:306 and transactions.html:105 render txn.title with innerHTML. A malicious title runs script in the victim's browser.",
+                  "mitigation": "Render user data with textContent / createElement instead of innerHTML; add a Content-Security-Policy (helmet).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 1,
+                  "score": ""
+                },
+                {
+                  "id": "262f3132-b36d-5731-9b97-528dac139de1",
+                  "title": "Cross-site request forgery on state-changing routes",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "POST/PUT/DELETE routes rely only on the session cookie; no CSRF token and no SameSite attribute set.",
+                  "mitigation": "Set cookie sameSite='strict' (or 'lax') and/or add CSRF tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 2,
+                  "score": ""
+                },
+                {
+                  "id": "9eb53acc-f9c1-568a-a784-5d06bbdfe45d",
+                  "title": "Session cookie theft",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Stolen user_session cookie would allow impersonation.",
+                  "mitigation": "Cookie is httpOnly and secure in production; 1-day maxAge. Add sameSite.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 3,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 60,
+              "y": 320
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Attacker"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "id": "d38f42a6-b03d-50df-bd1e-561b97504a1d",
+            "zIndex": 12,
+            "data": {
+              "type": "tm.Actor",
+              "name": "Attacker",
+              "description": "Unauthenticated internet attacker, or an authenticated (e.g. guest) user acting maliciously.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "providesAuthentication": false,
+              "threats": [
+                {
+                  "id": "46931f9b-22db-5ab3-8d09-6d449945d3f2",
+                  "title": "Brute force / credential stuffing on /login",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "No rate limiting or lockout on /login; 6-char minimum password.",
+                  "mitigation": "Add express-rate-limit on /login, /register and /guest; raise password policy.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 4,
+                  "score": ""
+                },
+                {
+                  "id": "3e5eb471-e9b0-599c-b503-798704cc3f04",
+                  "title": "User enumeration via login error messages",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "Unknown email returns 'Database error' while DB errors return 'Invalid email or password' (messages swapped), so responses differ.",
+                  "mitigation": "Return one generic 'Invalid email or password' for every failure.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 5,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 340,
+              "y": 200
+            },
+            "size": {
+              "width": 110,
+              "height": 110
+            },
+            "attrs": {
+              "text": {
+                "text": "Railway edge proxy (TLS)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "id": "70f246f7-d405-5a6f-9d77-3b088d15603b",
+            "zIndex": 13,
+            "data": {
+              "type": "tm.Process",
+              "name": "Railway edge proxy (TLS)",
+              "description": "Terminates HTTPS and forwards to the app over HTTP with X-Forwarded-* headers.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": "",
+              "threats": [
+                {
+                  "id": "f55f807d-077b-5724-a91b-30e79c2fa326",
+                  "title": "Spoofed X-Forwarded-* headers",
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "type": "Spoofing",
+                  "description": "app.set('trust proxy', 1) trusts one hop of forwarded headers.",
+                  "mitigation": "Only one proxy hop trusted; app not directly exposed outside Railway.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 6,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 590,
+              "y": 100
+            },
+            "size": {
+              "width": 110,
+              "height": 110
+            },
+            "attrs": {
+              "text": {
+                "text": "Express server (server.js)"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "id": "8d7f07b9-1535-5790-b02a-6e3a90d15252",
+            "zIndex": 14,
+            "data": {
+              "type": "tm.Process",
+              "name": "Express server (server.js)",
+              "description": "Node/Express 5 app: auth (bcrypt + express-session), budgets/transactions API, static file serving.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": "",
+              "threats": [
+                {
+                  "id": "66c60532-ce8c-5ec5-a5b3-81ac517c232d",
+                  "title": "IDOR: access/modify other users' budgets and transactions",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "DELETE /budgets/:id, GET /transactions/:budgetId, DELETE /transactions/:id and POST /transactions never verify the budget belongs to req.session.userId. Any logged-in user (including guests) can read or delete anyone's data by changing the ID.",
+                  "mitigation": "Scope every query by owner: e.g. DELETE FROM budgets WHERE id = ? AND user_id = ?; JOIN budgets on user_id for transaction routes.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 7,
+                  "score": ""
+                },
+                {
+                  "id": "b03ea04c-794d-5d67-ada5-859b22c467b2",
+                  "title": "Guest account escalates to other users' data",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "The unauthenticated /guest route issues a full session; combined with the IDOR this gives any visitor access to real users' data.",
+                  "mitigation": "Fixed by the IDOR ownership checks; optionally rate-limit /guest.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 8,
+                  "score": ""
+                },
+                {
+                  "id": "47aaa422-fb51-5377-adac-5bf3dc9a44b6",
+                  "title": "Source code and schema downloadable",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "express.static(__dirname) serves the project root: /server.js, /schema.sql, /package.json are public. (.env/.git are only protected by the default dotfiles:'ignore'.)",
+                  "mitigation": "Move front-end files to public/ and serve express.static('public').",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 9,
+                  "score": ""
+                },
+                {
+                  "id": "88b5680e-9873-55f1-9356-1699d2304cd4",
+                  "title": "Missing security headers",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "No CSP, X-Frame-Options, X-Content-Type-Options, HSTS (expected ZAP findings).",
+                  "mitigation": "Add helmet() middleware with a CSP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 10,
+                  "score": ""
+                },
+                {
+                  "id": "13a31733-017f-58a3-ab2d-53eea5ba1f09",
+                  "title": "No audit trail for destructive actions",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "description": "Deletes and profile/password changes are not logged with user and timestamp; only console.log.",
+                  "mitigation": "Add structured logging (e.g. pino) of security-relevant events.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 11,
+                  "score": ""
+                },
+                {
+                  "id": "9f155eb3-70bc-5bd6-a73e-ee00febe5447",
+                  "title": "Resource exhaustion via /guest and bcrypt",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "/guest is unauthenticated and does bcrypt + 7 inserts per call; can be spammed. Pruning to 25 accounts limits DB growth only.",
+                  "mitigation": "Rate-limit /guest and /login; return early under load.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 12,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 565,
+              "y": 330
+            },
+            "size": {
+              "width": 170,
+              "height": 70
+            },
+            "attrs": {
+              "text": {
+                "text": ".env / Railway variables"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "id": "34b9781b-140b-57cd-9d92-8837cc076e96",
+            "zIndex": 15,
+            "data": {
+              "type": "tm.Store",
+              "name": ".env / Railway variables",
+              "description": "DB credentials and SESSION_SECRET.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": true,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false,
+              "threats": [
+                {
+                  "id": "094974de-8879-578d-be9b-4c70b0f86cc0",
+                  "title": "Secrets committed to git or leaked in logs",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": ".env would expose DB access and allow forging session cookies.",
+                  "mitigation": ".env is in .gitignore; add Gitleaks secret scanning gate in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 13,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 900,
+              "y": 110
+            },
+            "size": {
+              "width": 170,
+              "height": 70
+            },
+            "attrs": {
+              "text": {
+                "text": "MySQL (users, budgets, transactions)"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "id": "516f9bbc-f721-5a54-b0d7-8f9e94041591",
+            "zIndex": 16,
+            "data": {
+              "type": "tm.Store",
+              "name": "MySQL (users, budgets, transactions)",
+              "description": "Application data; passwords stored as bcrypt hashes.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": true,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false,
+              "threats": [
+                {
+                  "id": "c78aca68-5bba-56bf-a4b3-e3a8ff7cac67",
+                  "title": "SQL injection",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "User input reaches SQL queries.",
+                  "mitigation": "All queries use mysql2 parameterized placeholders (?).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 14,
+                  "score": ""
+                },
+                {
+                  "id": "8635db3b-97ae-5564-acc8-919d75a3f8da",
+                  "title": "Password hash disclosure",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "DB compromise exposes password hashes.",
+                  "mitigation": "bcrypt with salt (cost 10); consider cost 12.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 15,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 900,
+              "y": 320
+            },
+            "size": {
+              "width": 170,
+              "height": 70
+            },
+            "attrs": {
+              "text": {
+                "text": "MySQL session store"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "id": "a8590867-3c5d-582f-b1ef-74229297839d",
+            "zIndex": 17,
+            "data": {
+              "type": "tm.Store",
+              "name": "MySQL session store",
+              "description": "express-mysql-session table of active sessions.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false,
+              "threats": [
+                {
+                  "id": "b8fee3bb-3076-56c7-9281-2355cddadab2",
+                  "title": "Session forgery with leaked SESSION_SECRET",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Signed cookies can be forged if the secret leaks.",
+                  "mitigation": "Secret kept in environment variables only; rotate if exposed.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 16,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 60,
+              "y": 600
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Developer"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "id": "2a74787b-a068-5b31-805e-37decd486690",
+            "zIndex": 18,
+            "data": {
+              "type": "tm.Actor",
+              "name": "Developer",
+              "description": "Pair project developers pushing code.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "providesAuthentication": false,
+              "threats": []
+            }
+          },
+          {
+            "position": {
+              "x": 360,
+              "y": 600
+            },
+            "size": {
+              "width": 170,
+              "height": 70
+            },
+            "attrs": {
+              "text": {
+                "text": "GitHub repository"
+              },
+              "topLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "id": "5d77cb8f-2383-5e40-b22f-fcca4d6ae78b",
+            "zIndex": 19,
+            "data": {
+              "type": "tm.Store",
+              "name": "GitHub repository",
+              "description": "Source code, package-lock.json, workflow files.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isALog": false,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false,
+              "threats": [
+                {
+                  "id": "2c4f5d83-48c2-5c4f-b3e0-2f1fc393e6e8",
+                  "title": "Vulnerable or malicious npm dependency",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "7 direct deps plus transitive deps are not scanned.",
+                  "mitigation": "CI gate: npm audit --audit-level=high / Dependabot; commit package-lock.json.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 17,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "position": {
+              "x": 640,
+              "y": 580
+            },
+            "size": {
+              "width": 110,
+              "height": 110
+            },
+            "attrs": {
+              "text": {
+                "text": "GitHub Actions pipeline"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "id": "9beb66f3-cc56-582e-9a96-e80d31970899",
+            "zIndex": 20,
+            "data": {
+              "type": "tm.Process",
+              "name": "GitHub Actions pipeline",
+              "description": "Proposed: Semgrep SAST, npm audit, Gitleaks, Trivy container scan, ZAP baseline.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": "",
+              "threats": [
+                {
+                  "id": "83c1dcc0-d831-5805-a418-2f269edac578",
+                  "title": "Pipeline secrets exposed / tampered workflow",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "Workflow with deploy token could be modified by a malicious PR.",
+                  "mitigation": "Pin actions to SHAs, least-privilege GITHUB_TOKEN, protect main branch, require passing gates.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 18,
+                  "score": ""
+                },
+                {
+                  "id": "936cf360-e260-5011-a427-d18448e10f41",
+                  "title": "Vulnerable base image in container",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "No Dockerfile yet; a future image could ship OS-level CVEs.",
+                  "mitigation": "Add Dockerfile using node:lts-alpine; Trivy gate failing on HIGH/CRITICAL.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 19,
+                  "score": ""
+                }
+              ]
+            }
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": "block"
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 21,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTPS requests / responses",
+              "description": "Login credentials, budget/transaction data, session cookie.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": true,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": []
+            },
+            "id": "7c8591e9-d829-554a-b99c-7c5773335129",
+            "labels": [
+              "HTTPS requests / responses"
+            ],
+            "source": {
+              "cell": "d7944ae9-51ca-5c43-9893-b2c7a5ebcacf"
+            },
+            "target": {
+              "cell": "70f246f7-d405-5a6f-9d77-3b088d15603b"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 22,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Malicious requests",
+              "description": "Fuzzing, brute force, IDOR attempts, XSS payloads.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": []
+            },
+            "id": "7a7f708c-b9b8-50fa-9a5a-44115de2d6e9",
+            "labels": [
+              "Malicious requests"
+            ],
+            "source": {
+              "cell": "d38f42a6-b03d-50df-bd1e-561b97504a1d"
+            },
+            "target": {
+              "cell": "70f246f7-d405-5a6f-9d77-3b088d15603b"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": "block"
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 23,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Forwarded HTTP",
+              "description": "Plain HTTP inside Railway network with X-Forwarded-* headers.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": true,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": []
+            },
+            "id": "bd36cd52-70ce-508c-81ae-a4ca9fa45c43",
+            "labels": [
+              "Forwarded HTTP"
+            ],
+            "source": {
+              "cell": "70f246f7-d405-5a6f-9d77-3b088d15603b"
+            },
+            "target": {
+              "cell": "8d7f07b9-1535-5790-b02a-6e3a90d15252"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 24,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Read secrets",
+              "description": "Loaded by dotenv at startup.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": []
+            },
+            "id": "54d53312-027a-5e6c-b63b-cd15bd506210",
+            "labels": [
+              "Read secrets"
+            ],
+            "source": {
+              "cell": "34b9781b-140b-57cd-9d92-8837cc076e96"
+            },
+            "target": {
+              "cell": "8d7f07b9-1535-5790-b02a-6e3a90d15252"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": "block"
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 25,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "SQL queries",
+              "description": "Parameterized queries via mysql2.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isBidirectional": true,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "MySQL",
+              "threats": [
+                {
+                  "id": "fb49b490-68e2-5b8e-8023-653c64df13ae",
+                  "title": "Unencrypted DB connection",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "mysql2 connection has no TLS config; relies on Railway private network.",
+                  "mitigation": "Enable ssl option if DB is reached over a public network.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 20,
+                  "score": ""
+                }
+              ]
+            },
+            "id": "91218961-68e7-52c0-82b1-f7d2b1811b72",
+            "labels": [
+              "SQL queries"
+            ],
+            "source": {
+              "cell": "8d7f07b9-1535-5790-b02a-6e3a90d15252"
+            },
+            "target": {
+              "cell": "516f9bbc-f721-5a54-b0d7-8f9e94041591"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": "block"
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 26,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Session read/write",
+              "description": "Session lookup per request.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": true,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "MySQL",
+              "threats": []
+            },
+            "id": "2dd16d4b-d8d5-500d-95ba-631d4f4a22c8",
+            "labels": [
+              "Session read/write"
+            ],
+            "source": {
+              "cell": "8d7f07b9-1535-5790-b02a-6e3a90d15252"
+            },
+            "target": {
+              "cell": "a8590867-3c5d-582f-b1ef-74229297839d"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 27,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "git push / PR",
+              "description": "Code changes.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": []
+            },
+            "id": "660b65ca-802f-56ee-91a4-27beb68d4146",
+            "labels": [
+              "git push / PR"
+            ],
+            "source": {
+              "cell": "2a74787b-a068-5b31-805e-37decd486690"
+            },
+            "target": {
+              "cell": "5d77cb8f-2383-5e40-b22f-fcca4d6ae78b"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 28,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Trigger workflow",
+              "description": "On push / pull_request.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": []
+            },
+            "id": "edb6e3fb-a853-592f-8d0f-0f318696f08c",
+            "labels": [
+              "Trigger workflow"
+            ],
+            "source": {
+              "cell": "5d77cb8f-2383-5e40-b22f-fcca4d6ae78b"
+            },
+            "target": {
+              "cell": "9beb66f3-cc56-582e-9a96-e80d31970899"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 29,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Deploy",
+              "description": "Deploy to Railway only after all security gates pass.",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": []
+            },
+            "id": "5d00c4be-caa0-55dc-beda-499e811ffa31",
+            "labels": [
+              "Deploy"
+            ],
+            "source": {
+              "cell": "9beb66f3-cc56-582e-9a96-e80d31970899"
+            },
+            "target": {
+              "cell": "8d7f07b9-1535-5790-b02a-6e3a90d15252"
+            },
+            "vertices": []
+          }
+        ]
+      }
+    ],
+    "diagramTop": 1,
+    "reviewer": "",
+    "threatTop": 20
+  }
+}
