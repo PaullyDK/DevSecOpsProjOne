@@ -21,17 +21,17 @@ Click **Try it as a guest** on the login page for a pre-loaded demo account (no 
 1. Requires node.js and MySQL.
 2. `npm install` in the root folder installs the dependencies.
 3. Start MySQL
-4. Then run `mysql -u root -p -e "CREATE DATABASE financial\_planner;"` and `mysql -u root -p financial\_planner < schema.sql` to populate the database with the correct schema.
+4. Then run `mysql -u root -p -e "CREATE DATABASE financial\\\\\\\_planner;"` and `mysql -u root -p financial\\\\\\\_planner < schema.sql` to populate the database with the correct schema.
 5. Copy this into a file named `.env`. Replace the two bracketed values with your own, the rest are fine as-is for local development.
 
 ```sh
-DB\_HOST=localhost
-DB\_USER=root
-DB\_PASSWORD=<your\_mysql\_password>
-DB\_NAME=financial\_planner
-SESSION\_SECRET=<any\_long\_random\_string>
+DB\\\\\\\_HOST=localhost
+DB\\\\\\\_USER=root
+DB\\\\\\\_PASSWORD=<your\\\\\\\_mysql\\\\\\\_password>
+DB\\\\\\\_NAME=financial\\\\\\\_planner
+SESSION\\\\\\\_SECRET=<any\\\\\\\_long\\\\\\\_random\\\\\\\_string>
 PORT=3000
-NODE\_ENV=development
+NODE\\\\\\\_ENV=development
 ```
 
 5. Run `npm start`
