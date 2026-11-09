@@ -9,7 +9,7 @@ on:
       - main
   schedule:
     - cron: "0 0 * * 1"
-
+# semgrep job for sast and basic SCA
 jobs:
   semgrep:
     runs-on: ubuntu-latest
