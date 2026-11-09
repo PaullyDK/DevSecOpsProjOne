@@ -1,0 +1,36 @@
+services:
+  app:
+    build:
+      context: ./proj1
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER:-financial_planner}
+      DB_PASSWORD: ${DB_PASSWORD:-development-password}
+      DB_NAME: ${DB_NAME:-financial_planner}
+      SESSION_SECRET: ${SESSION_SECRET:-development-session-secret-change-me}
+      PORT: 3000
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-financial_planner}
+      MYSQL_USER: ${DB_USER:-financial_planner}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-development-password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-development-root-password}
+    healthcheck:
+      test:
+          mysql --protocol=TCP -h 127.0.0.1 -u"$$MYSQL_USER"
+          -p"$$MYSQL_PASSWORD" --execute="SHOW DATABASES;"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  mysql_data:

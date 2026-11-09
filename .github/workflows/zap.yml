@@ -1,0 +1,32 @@
+name: ZAP DAST Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Start Application and Database
+        run: |
+          docker compose up -d
+          sleep 10
+
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: http://localhost:3000
+          rules_file_name: 'zap/rules.tsv'
+          cmd_options: '-a -j'
+
+      - name: Upload Report
+        if: ${{ always() && !env.ACT }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: zap-report
+          path: zap-report.html
