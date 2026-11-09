@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: semgrep/semgrep
-    permissions:
-      contents: read
-      security-events: write
+    permissions: write-all
     steps:
       - name: Setup node
         run: apk add --no-cache nodejs npm
