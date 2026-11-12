@@ -1,0 +1,37 @@
+# .zap/rules.tsv
+# ZAP Baseline scan rules configuration
+# Format: rule_id	IGNORE|WARN|FAIL
+# Adjust thresholds based on your risk tolerance.
+#
+# IGNORE  = don't report it at all
+# WARN    = report but don't fail the build (default for most rules)
+# FAIL    = fail the pipeline if this rule fires
+#
+# To find rule IDs: https://www.zaproxy.org/docs/alerts/
+
+# Always fail on these high-severity findings
+10202	FAIL	# Absence of Anti-CSRF Tokens
+10098	FAIL	# Cross-Domain Misconfiguration
+10105	FAIL	# Weak Authentication Method
+40012	FAIL	# Cross Site Scripting (Reflected)
+40014	FAIL	# Cross Site Scripting (Persistent)
+40018	FAIL	# SQL Injection
+40022	FAIL	# SQL Injection - MySQL
+90019	FAIL	# Server Side Code Injection
+
+# Warn but don't fail — review these manually
+10010	WARN	# Cookie No HttpOnly Flag
+10011	WARN	# Cookie Without Secure Flag
+10015	WARN	# Incomplete or No Cache-control Header Set
+10016	WARN	# Web Browser XSS Protection Not Enabled
+10017	WARN	# Cross-Domain JavaScript Source File Inclusion
+10021	WARN	# X-Content-Type-Options Header Missing
+10035	WARN	# Strict-Transport-Security Header Not Set
+10036	WARN	# Server Leaks Version Information via "Server" Header
+10037	WARN	# Server Leaks Information via "X-Powered-By"
+10038	WARN	# Content Security Policy (CSP) Header Not Set
+10054	WARN	# Cookie with SameSite Attribute None
+
+# Ignore — informational or false-positive prone in CI
+10027	IGNORE	# Information Disclosure - Suspicious Comments
+10096	IGNORE	# Timestamp Disclosure
