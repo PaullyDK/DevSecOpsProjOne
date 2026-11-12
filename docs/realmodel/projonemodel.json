@@ -19,6 +19,33 @@
         "cells": [
           {
             "position": {
+              "x": 89.99999999999977,
+              "y": -10
+            },
+            "size": {
+              "width": 310,
+              "height": 220
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "id": "e493d46f-2109-44af-84b2-76d171ad8aa8",
+            "zIndex": -1,
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "Trust Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [
+                "4b942c21-1fb6-467c-8f17-8382965d5605"
+              ],
+              "containedElements": [
+                "4708e6ec-0894-4890-9c58-257fcbb6434f"
+              ]
+            }
+          },
+          {
+            "position": {
               "x": -660,
               "y": 8
             },
@@ -38,6 +65,7 @@
             },
             "visible": true,
             "shape": "actor",
+            "zIndex": 1,
             "ports": {
               "groups": {
                 "top": {
@@ -121,7 +149,6 @@
               ]
             },
             "id": "2fe28943-5363-45e0-8e1a-98820b99c741",
-            "zIndex": 1,
             "data": {
               "type": "tm.Actor",
               "name": "User",
@@ -148,13 +175,14 @@
                 "text": "Attacker"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
             "visible": true,
             "shape": "actor",
+            "zIndex": 2,
             "ports": {
               "groups": {
                 "top": {
@@ -238,7 +266,6 @@
               ]
             },
             "id": "d909ff62-2ed5-46d4-a6a7-ccae5492cb47",
-            "zIndex": 2,
             "data": {
               "type": "tm.Actor",
               "name": "Attacker",
@@ -246,9 +273,27 @@
               "isTrustBoundary": false,
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "providesAuthentication": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "766b4aff-4950-46ff-aecf-16c01aa4cdbc",
+                  "title": "Credential Theft",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "An attacker could get the user's login through means such as phishing or unauthorized access to the victim's computer.",
+                  "mitigation": "MFA, Encryption, Cookies, OTP and token shortened",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 3,
+                  "score": "9"
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 3,
+                "repudiation": 0
+              }
             }
           },
           {
@@ -272,6 +317,7 @@
             },
             "visible": true,
             "shape": "process",
+            "zIndex": 3,
             "ports": {
               "groups": {
                 "top": {
@@ -355,7 +401,6 @@
               ]
             },
             "id": "57422aff-fd5a-4c42-a326-7bc500a43fab",
-            "zIndex": 3,
             "data": {
               "type": "tm.Process",
               "name": "Web App",
@@ -392,6 +437,7 @@
             },
             "visible": true,
             "shape": "process",
+            "zIndex": 4,
             "ports": {
               "groups": {
                 "top": {
@@ -475,7 +521,6 @@
               ]
             },
             "id": "6e47f98b-78cc-4394-a087-73309e3d0385",
-            "zIndex": 4,
             "data": {
               "type": "tm.Process",
               "name": "Express Server",
@@ -515,6 +560,7 @@
             },
             "visible": true,
             "shape": "store",
+            "zIndex": 5,
             "ports": {
               "groups": {
                 "top": {
@@ -598,7 +644,6 @@
               ]
             },
             "id": "4708e6ec-0894-4890-9c58-257fcbb6434f",
-            "zIndex": 5,
             "data": {
               "type": "tm.Store",
               "name": "MySQL and Sessions",
@@ -614,100 +659,6 @@
               "storesInventory": false,
               "threats": []
             }
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": "block"
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "HTTPS requests / responses",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": true,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "HTTPS requests / responses"
-            ],
-            "id": "14ac8287-b84c-4ac1-81db-e06165ac28d9",
-            "source": {
-              "cell": "2fe28943-5363-45e0-8e1a-98820b99c741",
-              "port": "c67b7217-9cbb-43f2-8f15-13eb5085a4c7"
-            },
-            "target": {
-              "cell": "57422aff-fd5a-4c42-a326-7bc500a43fab",
-              "port": "a7664d06-8977-41ff-b289-297c0871777a"
-            },
-            "vertices": []
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Malicious Requets",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Malicious Requets"
-            ],
-            "id": "e3521ba7-c8eb-4ef2-a000-5e28156b22ae",
-            "source": {
-              "cell": "d909ff62-2ed5-46d4-a6a7-ccae5492cb47",
-              "port": "c67b7217-9cbb-43f2-8f15-13eb5085a4c7"
-            },
-            "target": {
-              "cell": "57422aff-fd5a-4c42-a326-7bc500a43fab",
-              "port": "a7664d06-8977-41ff-b289-297c0871777a"
-            },
-            "vertices": []
           },
           {
             "shape": "flow",
@@ -825,7 +776,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "e493d46f-2109-44af-84b2-76d171ad8aa8"
+              ]
             },
             "labels": [
               "SQL queries"
@@ -840,12 +793,154 @@
               "port": "1eb76748-15b9-4b77-9057-d3d04888aee7"
             },
             "vertices": []
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Trust Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Trust Boundary"
+            ],
+            "id": "68b90a9b-a268-47cc-bb54-ede711d99562",
+            "source": {
+              "x": -220,
+              "y": -240
+            },
+            "target": {
+              "x": -180,
+              "y": 390
+            }
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": "block"
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTPS requests / responses",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": true,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "HTTPS requests / responses"
+            ],
+            "id": "14ac8287-b84c-4ac1-81db-e06165ac28d9",
+            "source": {
+              "cell": "2fe28943-5363-45e0-8e1a-98820b99c741",
+              "port": "c67b7217-9cbb-43f2-8f15-13eb5085a4c7"
+            },
+            "target": {
+              "cell": "57422aff-fd5a-4c42-a326-7bc500a43fab",
+              "port": "a7664d06-8977-41ff-b289-297c0871777a"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Malicious Requests",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [
+                {
+                  "id": "8b418772-7c9c-4d75-a7a5-ea31392f7b27",
+                  "title": "MITM",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Intercepting Data over Network, ",
+                  "mitigation": "HTTPS, certificate validation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 4,
+                  "score": "9"
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 0,
+                "denialOfService": 0
+              }
+            },
+            "labels": [
+              "Malicious Requests"
+            ],
+            "id": "e3521ba7-c8eb-4ef2-a000-5e28156b22ae",
+            "source": {
+              "cell": "d909ff62-2ed5-46d4-a6a7-ccae5492cb47",
+              "port": "c67b7217-9cbb-43f2-8f15-13eb5085a4c7"
+            },
+            "target": {
+              "cell": "57422aff-fd5a-4c42-a326-7bc500a43fab",
+              "port": "a7664d06-8977-41ff-b289-297c0871777a"
+            },
+            "vertices": []
           }
         ]
       }
     ],
     "diagramTop": 1,
     "reviewer": "N/A",
-    "threatTop": 0
+    "threatTop": 5
   }
 }
