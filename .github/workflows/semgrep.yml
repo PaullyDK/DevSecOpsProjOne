@@ -1,36 +1,107 @@
 name: Semgrep
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
-  schedule:
-    - cron: "0 0 * * 1"
-# semgrep job for sast and basic SCA
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
 jobs:
-  semgrep:
+  pr-scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Scan for new findings
+        run: |
+          semgrep scan \
+            --config p/javascript \
+            --baseline-commit "$BASE_SHA" \
+            --metrics=off \
+            --error
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+  push-scan:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     container:
       image: semgrep/semgrep
     permissions:
-      contents: read
-      security-events: write
-      actions: read
+      contents: write
     steps:
-      - name: Setup node
-        run: apk add --no-cache nodejs npm
-
-      - name: Checkout Code
+      - name: checkout code
         uses: actions/checkout@v7
-
-      - name: Run Semgrep
-        run: semgrep scan --config p/javascript --sarif --output semgrep.sarif
-
-      - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: semgrep.sarif
-        if: ${{ always() && !env.ACT }}
+          fetch-depth: 0
+
+      - run: apk add --no-cache nodejs npm
+
+      - name: Scan for findings introduced by this push
+        id: scan
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "No previous commit to diff against, skipping."
+            echo "new_findings=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          set +e
+          semgrep scan \
+            --config p/default \
+            --baseline-commit "$BEFORE" \
+            --metrics=off \
+            --error \
+            --sarif -o semgrep-new.sarif
+          rc=$?
+          set -e
+
+          if [ "$rc" -eq 0 ]; then
+            echo "new_findings=false" >> "$GITHUB_OUTPUT"
+          elif [ "$rc" -eq 1 ]; then
+            echo "new_findings=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Semgrep failed with exit code $rc"
+            exit "$rc"
+          fi
+
+      - name: upload sarif
+        uses: actions/upload-artifact@v7
+        if: steps.scan.outputs.new_findings == 'true'
+        with:
+          name: semgrep-new-findings
+          path: semgrep-new.sarif
+
+      - name: Preserve the pushed commits on a review branch
+        if: steps.scan.outputs.new_findings == 'true'
+        run: |
+          BRANCH="semgrep/review-${GITHUB_SHA::8}"
+          git push origin "$GITHUB_SHA:refs/heads/$BRANCH"
+          echo "Created $BRANCH for review and fixes" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Revert main
+        if: steps.scan.outputs.new_findings == 'true' && vars.REVERT_ON_FINDINGS == 'true'
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git revert --no-edit "$BEFORE..$GITHUB_SHA"
+          git push origin HEAD:main
+
+      - name: Fail the run
+        if: steps.scan.outputs.new_findings == 'true'
+        run: |
+          echo "New Semgrep findings introduced by this push."
+          exit 1
